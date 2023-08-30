@@ -1,124 +1,113 @@
 <script lang="ts">
-	import { text } from "@sveltejs/kit";
-
-  let messages: any[] = [];
-  let userInputRight = '';
-  let userInputLeft = '';
-
-
+	export let leftUser: string | undefined;
+	export let rightUser: string | undefined;
+	let messages: { text: string; talker: string; right: boolean }[] = [];
+	let userInputRight = '';
+	let userInputLeft = '';
 </script>
+
 <div class="mess">
-    <p>
-        {#each messages as message (message.text)}
-          <div class="message {message.talker}">
-            <span class="talker">{message.talker}</span>
-            {message.text}
-          </div>
-        {/each}
-    </p>
-        <div class="inputs leftInput">
-            <input type="text" placeholder="Type a message.." bind:value={userInputLeft} on:keydown={(s) => {
-                if(s.key === 'Enter'){
-                    for (let i = 0; i < messages.length; i++) {
-                        if (messages[i].text == userInputLeft) {
-                            userInputLeft = userInputLeft + " ";
-                        }  
-                    }
+	{#if !leftUser || !rightUser}
+		<div
+			style="
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                text-align:center;
+                align-items: center;
+                font-weight: bolder;
+                font-size: 1.5em;
+                height: 100%;"
+		>
+			<p>Select two users to start chatting</p>
+		</div>
+	{:else}
+		<p>
+			{#each messages as message (message.text)}
+				<div class="msgContainer">
+					<div class="message" class:right={message.right}>
+						<span class="talker">{message.talker}</span>
+						{message.text}
+					</div>
+				</div>
+			{/each}
+		</p>
+		<div class="inputs">
+			<input
+				type="text"
+				placeholder={rightUser}
+				bind:value={userInputRight}
+				on:keydown={(e) => {
+					if (e.key === 'Enter') {
+						for (let i = 0; i < messages.length; i++) {
+							if (messages[i].text == userInputRight) {
+								userInputRight = userInputRight + ' ';
+							}
+						}
+						if (userInputRight !== '') {
+							messages = [
+								...messages,
+								{ text: userInputRight, talker: rightUser || '', right: false }
+							];
+							userInputRight = '';
+						}
+					}
+				}}
+			/>
+			<input
+				type="text"
+				placeholder={leftUser}
+				bind:value={userInputLeft}
+				on:keydown={(s) => {
+					if (s.key === 'Enter') {
+						for (let i = 0; i < messages.length; i++) {
+							if (messages[i].text == userInputLeft) {
+								userInputLeft = userInputLeft + ' ';
+							}
+						}
 
-                    if (userInputLeft !== "") {
-                    messages = [...messages, { text: userInputLeft, talker: 'userLeft' }];
-                    userInputLeft = '';
-                    }
-                }
-            }}/>
-        </div>
-
-        <div class="inputs rightInput">
-            <input type="text" placeholder="Type a message.." bind:value={userInputRight} on:keydown={(e) => {
-                if(e.key === 'Enter'){
-                    for (let i = 0; i < messages.length; i++) {
-                            if (messages[i].text == userInputRight) {
-                                userInputRight = userInputRight + " ";
-                            } 
-                    }
-                    if (userInputRight !== '') {
-                       
-                    messages = [...messages, { text: userInputRight, talker: 'userRight' }];
-                    userInputRight = '';
-                    }   
-                }
-            }}/>
-        </div>
+						if (userInputLeft !== '') {
+							messages = [
+								...messages,
+								{ text: userInputLeft, talker: leftUser || '', right: true }
+							];
+							userInputLeft = '';
+						}
+					}
+				}}
+			/>
+		</div>
+	{/if}
 </div>
 
 <style>
-
-    .mess{
-       
-        display: grid;
-        grid-column: 2;
-        gap: 10px;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto 40px;
-        height: 90vh;    
-        overflow: auto;
-        background-color: rgb(116, 96, 134);
-
-    }
-
-    .message {
-
-        padding: 8px;
-        margin: 8px;
-        border-radius: 8px;
-    
-    }
-
-    .userLeft {
-
-        display: block;
-        background-color: lightblue;
-        grid-column-start: 1;
-
-    }
-
-    .userRight {
-
-        display: block;
-        background-color: lightgreen;
-        grid-column-start: 2;
-
-    }
-
-    .talker {
-
-    font-weight: bold;
-
-    }
-    .rightInput{
-        
-        position: fixed;
-        bottom: 86px;
-        left: 1600px;
-        width: 100%;
-        padding: 10px;
-    }
-    
-
-    .leftInput{
-        position: fixed;
-        bottom: 86px;
-
-        width: 100%;
-        padding: 10px;
-
-    }
-
-    .inputs {
-
-        background-color: rgb(42, 46, 41);
-        grid-row: 2;
-
-    }
-
+	.mess {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+	.mess p {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		padding: 15px;
+		user-select: none;
+	}
+	.inputs {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
+	.message {
+		background-color: lightblue;
+		max-width: fit-content;
+		padding: 5px;
+		border-radius: 5px;
+	}
+	.message.right {
+		background-color: lightgreen;
+		position: relative;
+		margin-left: auto;
+	}
 </style>
