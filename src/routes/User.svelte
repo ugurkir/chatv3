@@ -8,8 +8,8 @@
 		let keys = Object.keys(localStorage);
 		for (let i = 0; i < keys.length; i++) {
 			const key = keys[i];
-			if (key.startsWith('user: ')) {
-				let name = key.replace('user: ', '');
+			if (key.startsWith('friend: ')) {
+				let name = key.replace('friend: ', '');
 				if (name !== '') {
 					newUser = [...newUser, { name, selected: false }];
 				}
@@ -22,6 +22,9 @@
 
 <div class="allusr {cls}">
 	<header>
+
+		<!-- svelte-ignore a11y-autofocus -->
+		
 		<input
 			autofocus
 			type="text"
@@ -30,7 +33,7 @@
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
 					newUser = [...newUser, { name: usr, selected: false }];
-					localStorage.setItem(`user: ${usr}`, usr);
+					localStorage.setItem(`friend: ${usr}`, usr);
 					usr = '';
 				}
 			}}
@@ -39,6 +42,8 @@
 	<nav>
 		{#each newUser as user}
 			<div class="usr" class:selected={user.selected}>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 				<p
 					class="users"
 					on:click={(_) => {
@@ -55,7 +60,7 @@
 				</p>
 				<button
 					on:click={() => {
-						localStorage.removeItem(`user: ${user.name}`);
+						localStorage.removeItem(`friend: ${user.name}`);
 						newUser = newUser.filter((u) => u.name !== user.name);
 					}}>-</button
 				>
@@ -70,6 +75,7 @@
 		line-height: 40px;
 	}
 	.allusr {
+		background-color: #2b2b2b;
 		overflow: auto;
 		text-align: center;
 	}
@@ -86,6 +92,9 @@
 		width: 70%;
 		height: 40px;
 		padding: 5px;
+		border: 0px;
+		background-color: black;
+		color: wheat;
 	}
 
 	.users {
@@ -125,5 +134,26 @@
 	button:active {
 		transform: translateY(2px) scale(0.8);
 		background-color: rgba(255, 0, 0, 0.8);
+	}
+		/* width */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 5px rgb(58, 57, 57); 
+		border-radius: 10px;
+	}
+	
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: rgb(26, 25, 25); 
+		border-radius: 10px;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: rgb(37, 36, 36); 
 	}
 </style>

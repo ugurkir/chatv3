@@ -1,22 +1,48 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Chats from './Chats.svelte';
+	import Logreq from './Logreq.svelte';
 	import User from './User.svelte';
+	
+	
 	let selectedUsers: string[] = [];
+	export let Authentication: boolean = false;
+
+
+	onMount(() => {
+		let keys = Object.keys(localStorage);
+		for (let i = 0; i < keys.length; i++) {
+			const key = keys[i];
+			if (key.startsWith('account: ')) {
+				Authentication = true;
+			}
+			else{
+				Authentication = false;
+			}
+		}
+	});
+
 </script>
+{#if Authentication !== false}
+	
 
-<div>
-	<User
-		class="userArea"
-		on:selected={(e) => {
-			selectedUsers = [...selectedUsers, e.detail];
-		}}
-		on:unselected={(e) => {
-			selectedUsers = selectedUsers.filter((user) => user !== e.detail);
-		}}
-	/>
+	<div>
+		<User
+			class="userArea"
+			on:selected={(e) => {
+				selectedUsers = [...selectedUsers, e.detail];
+			}}
+			on:unselected={(e) => {
+				selectedUsers = selectedUsers.filter((user) => user !== e.detail);
+			}}
+		/>
 
-	<Chats leftUser={selectedUsers[0]} rightUser={selectedUsers[1]} />
-</div>
+		<Chats leftUser={selectedUsers[0]} rightUser={selectedUsers[1]} />
+	</div>
+
+{:else}
+<Logreq />
+{/if}
 
 <style>
 	:global(.userArea) {
@@ -30,6 +56,7 @@
 		padding: 0;
 		height: 100%;
 		width: 100%;
+		background-color: rgb(40, 40, 41);
 	}
 	div {
 		display: grid;
