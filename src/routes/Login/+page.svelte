@@ -14,7 +14,7 @@
 
         <input placeholder="User name:" type="text" bind:value={logName}/>
 
-        <input placeholder="Password:" type="text" bind:value={logPass}/>
+        <input placeholder="Password:" type="password" bind:value={logPass}/>
         <button on:click={() => {
             let keys = Object.keys(localStorage);
 		    for (let i = 0; i < keys.length; i++) {
@@ -35,6 +35,7 @@
                         logName = "";
                     }
                     else {
+                        localStorage.setItem(`currentAccount: ${logName}`, logPass);
                         goto("/");
                     }
 			    }

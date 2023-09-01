@@ -1,9 +1,29 @@
 <script lang="ts">
+	import { text } from "@sveltejs/kit";
+	import { onMount } from "svelte";
+
 	export let leftUser: string | undefined;
 	export let rightUser: string | undefined;
 	let messages: { text: string; talker: string; right: boolean }[] = [];
 	let userInputRight = '';
 	let userInputLeft = '';
+
+	onMount(() => {
+		let p: any = localStorage.getItem("messages");
+		let oldMessages = JSON.parse(p);
+		for (let i = 0; i < oldMessages.length; i++) {
+			let otext = oldMessages[i].text;
+			let otalker = oldMessages[i].talker;
+			messages = [ ...oldMessages ]
+			console.log(messages);
+		}
+		
+	})
+
+	let clickCount = 0;
+
+	
+
 </script>
 
 <div class="mess">
@@ -24,8 +44,19 @@
 	{:else}
 		<p>
 			{#each messages as message (message.text)}
-				<div class="msgContainer">
-					<div class="message" class:right={message.right}>
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="msgContainer" >
+					<div class="message" class:right={message.right} on:click={() => {
+						clickCount++;
+						if (clickCount === 2) {
+			
+							alert("aa");
+
+							clickCount = 0;
+
+						}
+					}} >
 						<span class="talker">{message.talker}</span>
 						{message.text}
 					</div>
@@ -49,6 +80,12 @@
 								...messages,
 								{ text: userInputRight, talker: rightUser || '', right: false }
 							];
+							for (let i = 0; i < messages.length; i++) {
+								let text = messages[i].text;
+								let talker = messages[i].talker;
+								let messJSON = JSON.stringify(messages);
+								localStorage.setItem("messages", messJSON);
+							}
 							userInputRight = '';
 						}
 					}
@@ -71,6 +108,12 @@
 								...messages,
 								{ text: userInputLeft, talker: leftUser || '', right: true }
 							];
+							for (let i = 0; i < messages.length; i++) {
+								let text = messages[i].text;
+								let talker = messages[i].talker;
+								let messJSON = JSON.stringify(messages);
+								localStorage.setItem("messages", messJSON);
+							}
 							userInputLeft = '';
 						}
 					}

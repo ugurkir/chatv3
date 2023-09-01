@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { createEventDispatcher, onMount } from 'svelte';
+
+
 
 	let newUser: { name: string; selected: boolean }[] = [];
 	let usr: string;
@@ -18,17 +21,37 @@
 	});
 	const dispatch = createEventDispatcher();
 	let cls = $$props.class;
+	
+	
 </script>
 
 <div class="allusr {cls}">
+	
 	<header>
 
 		<!-- svelte-ignore a11y-autofocus -->
 		
+		<button class="accSettings" 
+		on:click={() => {
+			let keys = Object.keys(localStorage);
+		    for (let i = 0; i < keys.length; i++) {
+			    const key = keys[i];
+			    if (key.startsWith('currentAccount: ')) {
+				    let name = key.replace('currentAccount: ', '');
+                    let pas = localStorage.removeItem("currentAccount: "+name);
+					goto("./Login")
+				}
+			}
+			
+		}}>Log out</button>
+
+		
+
+		<!-- svelte-ignore a11y-autofocus -->
 		<input
 			autofocus
 			type="text"
-			placeholder="New User"
+			placeholder="New Chat"
 			bind:value={usr}
 			on:keydown={(e) => {
 				if (e.key === 'Enter') {
@@ -58,7 +81,7 @@
 				>
 					{user.name}
 				</p>
-				<button
+				<button class="delUser"
 					on:click={() => {
 						localStorage.removeItem(`friend: ${user.name}`);
 						newUser = newUser.filter((u) => u.name !== user.name);
@@ -78,6 +101,28 @@
 		background-color: #2b2b2b;
 		overflow: auto;
 		text-align: center;
+		user-select: none;
+	}
+
+	.closeChange{
+		background-color: red;
+		border: none;
+		cursor: pointer;
+	}
+
+	.accChange{
+		height: 100px;
+		width: 25%;
+		background-color: red;
+		position: fixed;
+		display: flex;
+        justify-content: center;
+        text-align:center;
+        align-items: center;
+        font-weight: bolder;
+        font-size: 30px;
+        height: 100%;
+        user-select: none;
 	}
 
 	header {
@@ -95,6 +140,14 @@
 		border: 0px;
 		background-color: black;
 		color: wheat;
+	}
+
+	.accSettings{
+		margin-right: 10px;
+		height: 20px;
+		width: fit-content;
+		background-color: #272727;
+		cursor: pointer;
 	}
 
 	.users {
@@ -116,7 +169,7 @@
 		align-items: center;
 		padding: 0 5px;
 	}
-	.usr button {
+	.delUser {
 		--size: 30px;
 		height: var(--size);
 		width: var(--size);
@@ -131,7 +184,7 @@
 		line-height: var(--size);
 		outline: none;
 	}
-	button:active {
+	.delUser:active {
 		transform: translateY(2px) scale(0.8);
 		background-color: rgba(255, 0, 0, 0.8);
 	}

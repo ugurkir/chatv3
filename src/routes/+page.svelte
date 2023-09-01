@@ -13,7 +13,7 @@
 		let keys = Object.keys(localStorage);
 		for (let i = 0; i < keys.length; i++) {
 			const key = keys[i];
-			if (key.startsWith('account: ')) {
+			if (key.startsWith('currentAccount: ')) {
 				Authentication = true;
 			}
 			else{
